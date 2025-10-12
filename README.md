@@ -9,18 +9,16 @@ This framework introduces a **component-based design** that lets you declare UI 
 ## 📁 Project Structure
 
 ```
-
 gui_elements.hpp
 gui_framework.cpp
 gui_framework.h
 gui_framework_colors.h
 gui_framework_includes.h
 gui_framework_types.hpp
-
 ````
 
 - **gui_elements.hpp** — Where you create your gui elements
-- **gui_framework.cpp / .h** — Core logic of the framework (rendering, element handling, utilities)
+- **gui_framework.h** — Core logic of the framework (rendering, element handling, utilities)
 - **gui_framework_colors.h** — Color definitions and presets
 - **gui_framework_includes.h** — All required includes for ImGui + framework setup
 - **gui_framework_types.hpp** — Type definitions (structures, templates, wrappers, etc.)
