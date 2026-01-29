@@ -38,7 +38,6 @@ public:
 };
 
 
-
 // SAMPLE ELEMENTS
 namespace gui_elements {
 	namespace buttons {

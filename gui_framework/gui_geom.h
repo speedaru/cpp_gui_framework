@@ -1,18 +1,11 @@
 #pragma once
-#define _AMD64_
-#define NO_MIN_MAX
-#include <minwindef.h>
-#include <imgui/imgui.h>
+#include "gui_framework_includes.h"
 
 class GUIGeom {
 private:
 	const ImVec2 windowSize;
 public:
-	GUIGeom(const ImVec2 _windowSize)
-		: windowSize(_windowSize)
-	{
-		
-	}
+	GUIGeom(const ImVec2 _windowSize) : windowSize(_windowSize) { }
 
 	ImVec2 CalculateCenter(ImVec2 itemSize, ImVec2 winSize = { 0, 0 });
 	inline ImVec2 CalculateCenter(LPCSTR text, ImVec2 winSize = { 0, 0 }) {
@@ -46,5 +39,5 @@ public:
 	}
 };
 
-inline ImVec2 MENU_SIZE = { 600.f, 400.f };
-inline GUIGeom guiGeom(MENU_SIZE);
+extern const ImVec2 MENU_SIZE;
+inline GUIGeom g_guiGeom(MENU_SIZE);

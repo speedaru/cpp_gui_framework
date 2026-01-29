@@ -4,11 +4,6 @@
 #include "gui_geom.h"
 
 
-static inline float GetExtraRounding(float thickness) {
-	return std::roundf(thickness / 2.f);
-}
-
-
 // helper to retrieve or create an animation entry
 template <DerivedUiAnim T>
 void FP_GUI::SetAnim(ImGuiID id, const T& animation, bool forceCreate) {
@@ -19,6 +14,7 @@ void FP_GUI::SetAnim(ImGuiID id, const T& animation, bool forceCreate) {
 	//printf("[SetAnim] new shared ptr\n");
 	g_animations[id] = std::make_shared<T>(animation);
 }
+
 template <DerivedUiAnim T>
 std::shared_ptr<FpUIAnimBase> FP_GUI::GetAnim(ImGuiID id, const T& defaultAnimation) {
 	// create new if not exists
@@ -72,7 +68,7 @@ static void _DrawButtonBorder(ImRect rect, const FpGuiRectOutlined& params) {
 	rect.Max.y += thickness;
 
 	// bcs rect becomes less round when growig
-	const float extraRounding = GetExtraRounding(thickness);
+	const float extraRounding = std::roundf(thickness / 2.f);
 
 	const FpUiAnimOutline* panim = params.panim;
 	if (!panim) {
@@ -282,7 +278,7 @@ void FP_GUI::TextBox(float width, FpGuiTextBox& params) {
 void FP_GUI::NotiLabel(const std::string& text, ImU32 color, const FpGuiNotiLabel& params) {
 	ImGui::SetCursorPosY(params.posY);
 
-	guiGeom.CalculateAndSetCenterX(text.c_str(), params.windowWidth);
+	g_guiGeom.CalculateAndSetCenterX(text.c_str(), params.windowWidth);
 
 	ImGui::TextColored(IMU32_TO_VEC4(color), text.c_str());
 }

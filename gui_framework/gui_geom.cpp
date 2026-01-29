@@ -3,23 +3,22 @@
 
 ImVec2 GUIGeom::CalculateCenter(ImVec2 itemSize, ImVec2 winSize) {
 	// if no specifc subwindow size specified then use whole imgui window size by default
-	if (!winSize) {		// { 0, 0}
+	if (!winSize.x && !winSize.y)
 		winSize = windowSize;
-	}
 
 	return ImVec2(CalculateCenterX(itemSize.x, winSize.x), CalculateCenterY(itemSize.y, winSize.y));
 }
+
 float GUIGeom::CalculateCenterX(float itemWidth, float winWidth) {
-	if (!winWidth) {
+	if (!winWidth)
 		winWidth = windowSize.x;
-	}
 
 	return (winWidth / 2) - (itemWidth / 2);
 }
+
 float GUIGeom::CalculateCenterY(float itemHeight, float winHeight) {
-	if (!winHeight) {
+	if (!winHeight)
 		winHeight = windowSize.y;
-	}
 
 	return (winHeight / 2) - (itemHeight / 1.5f);
 }

@@ -7,6 +7,8 @@ typedef bool IsActive;
 #pragma endregion // types
 
 #pragma region animations
+#define UPDATE_DELTA(var_opacity, var, speed) var_opacity = ImLerp(var_opacity, b_active ? var.active: b_hovered ? var.hovered : var.base, speed * (1.0f - dt))
+
 struct FpUIAnimBase {
 	struct Opacity {
 		float active, hovered, base;
@@ -36,15 +38,15 @@ struct FpUIAnimBase {
 
 	// update animation values. dt = DeltaTime
 	inline virtual void update(bool b_active, bool b_hovered, float dt) {
-		bg_opacity = ImLerp(bg_opacity, b_active ? background.active: b_hovered ? background.hovered : background.base, BG_SPEED * (1.0f - dt));
-		text_opacity = ImLerp(text_opacity, b_active ? text.active : b_hovered ? text.hovered : text.base, TEXT_SPEED * (1.0f - dt));
+		UPDATE_DELTA(bg_opacity, background, BG_SPEED);
+		UPDATE_DELTA(text_opacity, text, BG_SPEED);
 	}
 
-	// copy operator
-	void operator=(const FpUIAnimBase& rhs) {
-		bg_opacity = rhs.bg_opacity; text_opacity = rhs.text_opacity;
-		background = rhs.background; text = rhs.text;
-	}
+	//// copy operator
+	//void operator=(const FpUIAnimBase& rhs) {
+	//	bg_opacity = rhs.bg_opacity; text_opacity = rhs.text_opacity;
+	//	background = rhs.background; text = rhs.text;
+	//}
 };
 
 struct FpUiAnimOutline {
@@ -64,14 +66,14 @@ struct FpUiAnimOutline {
 	// update animation values. dt = DeltaTime
 	inline virtual void update(bool b_active, bool b_hovered, float dt) {
 		//printf("outline active, hovered, base: %d %d %d\n", b_active, b_hovered, !b_active && !b_hovered);
-		outline_opacity = ImLerp(outline_opacity, b_active ? outline.active : b_hovered ? outline.hovered : outline.base, OUTLINE_SPEED * (1.0f - dt));
+		UPDATE_DELTA(outline_opacity, outline, OUTLINE_SPEED);
 	}
 
-	// copy operator
-	void operator=(const FpUiAnimOutline& rhs) {
-		outline_opacity = rhs.outline_opacity;
-		outline = rhs.outline;
-	}
+	//// copy operator
+	//void operator=(const FpUiAnimOutline& rhs) {
+	//	outline_opacity = rhs.outline_opacity;
+	//	outline = rhs.outline;
+	//}
 };
 
 struct FpUIAnimButton : public FpUIAnimBase, public FpUiAnimOutline {
@@ -87,16 +89,16 @@ struct FpUIAnimButton : public FpUIAnimBase, public FpUiAnimOutline {
 	// update animation values. dt = DeltaTime
 	inline virtual void update(bool b_active, bool b_hovered, float dt) override {
 		//printf("outline active, hovered, base: %d %d %d\n", b_active, b_hovered, !b_active && !b_hovered);
-		bg_opacity = ImLerp(bg_opacity, b_active ? background.active : b_hovered ? background.hovered : background.base, BG_SPEED * (1.0f - dt));
-		text_opacity = ImLerp(text_opacity, b_active ? text.active : b_hovered ? text.hovered : text.base, TEXT_SPEED * (1.0f - dt));
-		outline_opacity = ImLerp(outline_opacity, b_active ? outline.active : b_hovered ? outline.hovered : outline.base, OUTLINE_SPEED * (1.0f - dt));
+		UPDATE_DELTA(bg_opacity, background, BG_SPEED);
+		UPDATE_DELTA(text_opacity, text, TEXT_SPEED);
+		UPDATE_DELTA(outline_opacity, outline, OUTLINE_SPEED);
 	}
 
-	// copy operator
-	void operator=(const FpUIAnimButton& rhs) {
-		bg_opacity = rhs.bg_opacity; text_opacity = rhs.text_opacity; outline_opacity = rhs.outline_opacity;
-		background = rhs.background; text = rhs.text; outline = rhs.outline;
-	}
+	//// copy operator
+	//void operator=(const FpUIAnimButton& rhs) {
+	//	bg_opacity = rhs.bg_opacity; text_opacity = rhs.text_opacity; outline_opacity = rhs.outline_opacity;
+	//	background = rhs.background; text = rhs.text; outline = rhs.outline;
+	//}
 };
 
 // button with indicator
@@ -120,20 +122,20 @@ struct FpUIAnimButtonWithIndicator : public FpUIAnimButton {
 
 	// update animation values. dt = DeltaTime
 	inline virtual void update(bool b_active, bool b_hovered, float dt) override {
-		bg_opacity = ImLerp(bg_opacity, b_active ? background.active : b_hovered ? background.hovered : background.base, BG_SPEED * (1.0f - dt));
-		text_opacity = ImLerp(text_opacity, b_active ? text.active : b_hovered ? text.hovered : text.base, TEXT_SPEED * (1.0f - dt));
-		outline_opacity = ImLerp(outline_opacity, b_active ? outline.active : b_hovered ? outline.hovered : outline.base, OUTLINE_SPEED * (1.0f - dt));
+		UPDATE_DELTA(bg_opacity, background, BG_SPEED);
+		UPDATE_DELTA(text_opacity, text, TEXT_SPEED);
+		UPDATE_DELTA(outline_opacity, outline, OUTLINE_SPEED);
 	}
 
 	inline void update_indicator(bool b_active, bool b_hovered, float dt) {
-		indicator_opacity = ImLerp(indicator_opacity, b_active ? indicator.active : b_hovered ? indicator.hovered : indicator.base, INDICATOR_SPEED * (1.0f - dt));
+		UPDATE_DELTA(indicator_opacity, indicator, INDICATOR_SPEED);
 	}
 
-	// copy operator
-	void operator=(const FpUIAnimButtonWithIndicator& rhs) {
-		bg_opacity = rhs.bg_opacity; text_opacity = rhs.text_opacity; outline_opacity = rhs.outline_opacity; indicator_opacity = rhs.indicator_opacity;
-		background = rhs.background; text = rhs.text; outline = rhs.outline; indicator = rhs.indicator;
-	}
+	//// copy operator
+	//void operator=(const FpUIAnimButtonWithIndicator& rhs) {
+	//	bg_opacity = rhs.bg_opacity; text_opacity = rhs.text_opacity; outline_opacity = rhs.outline_opacity; indicator_opacity = rhs.indicator_opacity;
+	//	background = rhs.background; text = rhs.text; outline = rhs.outline; indicator = rhs.indicator;
+	//}
 };
 
 template <typename T>

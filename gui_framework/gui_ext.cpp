@@ -1,31 +1,9 @@
 #include "gui_ext.h"
+#include <wincodec.h>   // For WIC
+#pragma comment(lib, "windowscodecs.lib")
 
-void gui_ext::TextEx(ImFont* font, const char* format, ...) noexcept {
-	va_list args;
-	va_start(args, format);
 
-	char text[256]{};
-	vsnprintf_s(text, sizeof(text), sizeof(text) - 1, format, args);
-
-	va_end(args);
-
-	ImGui::PushFont(font);
-	ImGui::Text(text);
-	ImGui::PopFont();
-}
-
-bool gui_ext::ButtonEx(ImFont* font, const char* label, const ImVec2& buttonSize) noexcept {
-	ImGui::PushFont(font);
-	bool res = ImGui::Button(label, buttonSize);
-	ImGui::PopFont();
-
-	return res;
-}
-
-ID3D11ShaderResourceView* gui_ext::LoadResource(const uint8_t* imageBytes, size_t imageSize) {
-    ID3D11Device* device = gui_vars::g_pd3dDevice;
-    ID3D11DeviceContext* context = gui_vars::g_pd3dDeviceContext;
-
+ID3D11ShaderResourceView* gui_ext::LoadResource(const uint8_t* imageBytes, size_t imageSize, ID3D11Device* device, ID3D11DeviceContext* context) {
     IWICImagingFactory* pWIC = nullptr;
     IWICStream* pStream = nullptr;
     IWICBitmapDecoder* pDecoder = nullptr;
