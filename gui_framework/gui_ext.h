@@ -17,7 +17,6 @@
 	code \
 	ImGui::PopStyleVar();
 
-
 namespace gui_ext {
 	inline void PadY(float padding) {
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + padding);

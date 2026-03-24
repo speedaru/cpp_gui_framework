@@ -39,5 +39,5 @@ public:
 	}
 };
 
-extern const ImVec2 MENU_SIZE;
-inline GUIGeom g_guiGeom(MENU_SIZE);
+// from vec2 to ImVec2
+inline GUIGeom g_guiGeom(ImVec2((float)g_windowSize.x, (float)g_windowSize.y));

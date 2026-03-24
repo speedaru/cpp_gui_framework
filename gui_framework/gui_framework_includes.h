@@ -9,3 +9,4 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
+#include "gui_globals.h"
