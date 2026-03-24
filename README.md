@@ -26,7 +26,7 @@ A high-performance, object-oriented **C++ GUI framework** built on top of [Dear 
 
 The framework relies on gui\_globals.h to define the initial state of your application. Set these before initializing your windows.
 
-#### **gui\_globals.h : **
+#### **gui\_globals.h :**
 ```
 inline vec2 g_screenSize{}; // filled automatically by calling GuiDefinitionsInit() in your main()
 inline vec2 g_windowSize{ 400, 300 }; // to change
