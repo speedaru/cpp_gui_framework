@@ -1,103 +1,154 @@
-# 🧩 FP GUI Framework
+# **🧩 FP GUI Framework**
 
-A lightweight and modern **C++ GUI framework** built on top of [Dear ImGui](https://github.com/ocornut/imgui), designed to simplify UI creation and make it more modular, reusable, and clean.
+A high-performance, object-oriented **C++ GUI framework** built on top of [Dear ImGui](https://github.com/ocornut/imgui). Designed for developers who want to bypass Win32/DirectX 11 boilerplate and focus on building modular, animated, and visually polished interfaces.
 
-This framework introduces a **component-based design** that lets you declare UI elements as persistent objects with parameters, colors, animations, and event handlers — all in pure C++.
+## **🌟 Key Features**
 
----
+* **Window Abstraction**: Inherit from BaseWindow to automate Win32 class registration, D3D11 device setup, and ImGui context handling.  
+* **Component Architecture**: Define UI elements (Buttons, TextBoxes, Icons) as persistent objects with their own state, styling, and animations.  
+* **Smooth Animations**: Integrated animation system for hover effects, transitions, and active states.  
+* **Font Management**: A Font class that handles multi-size loading from memory headers or files.  
+* **Geometry Helpers**: Utilities for centering and layout calculations drawing.
 
-## 📁 Project Structure
+## **📁 Core Architecture**
 
+| Component | Description |
+| :---- | :---- |
+| **BaseWindow** | The foundation class for creating Win32 windows with DX11 backends. |
+| **GuiElementWrapper** | A template-based system for declaring persistent UI components. |
+| **FP\_GUI::Font** | Advanced font loader and retriever for dynamic scaling. |
+| **gui\_globals.h** | Central configuration for application metadata. |
+| **gui\_geom.h** | Layout utilities (e.g., CalculateAndSetCenterX). |
+
+## **🚀 Getting Started**
+
+### **1\. Global Configuration**
+
+The framework relies on gui\_globals.h to define the initial state of your application. Set these before initializing your windows.
+
+** gui\_globals.h **
 ```
-gui_elements.hpp
-gui_framework.cpp
-gui_framework.h
-gui_framework_colors.h
-gui_framework_includes.h
-gui_framework_types.hpp
+inline vec2 g_screenSize{}; // filled automatically by calling GuiDefinitionsInit() in your main()
+inline vec2 g_windowSize{ 400, 300 }; // to change
+inline const wchar_t* g_windowTitle = L"my sample app"; // to change (used for creating Win32 window)
 ````
 
-- **gui_elements.hpp** — Where you create your gui elements
-- **gui_framework.h** — Core logic of the framework (rendering, element handling, utilities)
-- **gui_framework_colors.h** — Color definitions and presets
-- **gui_framework_includes.h** — All required includes for ImGui + framework setup
-- **gui_framework_types.hpp** — Type definitions (structures, templates, wrappers, etc.)
+### **2\. Implementing a Custom Window**
 
----
+Inherit from BaseWindow to build your UI. The framework handles the loop; you just provide the Render() logic.
 
-## 🚀 Example Usage
+```
+\#include \<base\_window.h\>  
+\#include \<gui\_framework.h\>
 
-Here’s how you can define and use a GUI button using the framework:
+class MainMenu : public BaseWindow {  
+public:
+    MainMenu(DxDevice& dxDevice, bool\* pIsOpen) : BaseWindow(pIsOpen) {  
+        m\_windowData.menuName \= g\_windowTitle;
+        m\_windowData.size \= g\_windowSize;
+        m\_windowData.styles \= WS\_POPUP; // Borderless
+          
+        // Initialize D3D11 and Win32  
+        Init(dxDevice, GuiWndProcHandler);  
+    }
 
-```cpp
-/* in gui_elements.hpp */
-inline const GuiElementWrapper<FpGuiButton> loginButton(ImVec2(150, 35), []() {
-    FpGuiButton button;
-    button.text = "ok";
-    button.textColor = IMGUI_COLORS::white;
-    button.backgroundColor = FP_GUI_DEFAULTS::colors::buttonColor;
-    button.outline = _FpGuiOutline(FP_GUI_DEFAULTS::colors::defaultOutline, 2.f);
-    button.rounding = 6.f;
-    button.panim = &FP_GUI_DEFAULTS::anims::buttons::regular;
-    return button;
-});
+    void Render() override {  
+        // Force ImGui window to match Win32 window dimensions  
+        ImGui::SetNextWindowPos({ 0, 0 });  
+        ImGui::SetNextWindowSize({ (float)m\_windowData.size.x, (float)m\_windowData.size.y });
 
-/* in your imgui rendering loop */
-static GuiElement<FpGuiButton>& loginButton = gui_elements::buttons::loginButton.Get();
+        ImGui::Begin("Dashboard", m\_pIsOpen, ImGuiWindowFlags\_NoTitleBar | ImGuiWindowFlags\_NoResize);  
+          
+        ImGui::TextColored(IMGUI\_COLORS::skyBlue, "Framework Active");  
+          
+        // Render persistent components here...
 
-if (loginButton.active = FP_GUI::Button(loginButton.active, loginButton.size, loginButton.params)) {
-    // your code when button is pressed
+        ImGui::End();  
+    }  
+};
+````
+
+### **3\. The Main Application Loop**
+
+Your entry point should initialize the hardware device, the window, and any custom fonts.
+
+int main() {  
+    bool isRunning \= true;  
+    DxDevice dxDevice;
+
+    // 1\. Setup screen/window definitions  
+    GuiDefinitionsInit();
+
+    // 2\. Setup DX11 Hardware  
+    render::CreateD3DDevice(dxDevice);
+
+    // 3\. Create Window Instance  
+    MainMenu menu(dxDevice, \&isRunning);
+
+    // 4\. (Optional) Load Custom Fonts  
+    // FP\_GUI::InitFonts(ImGui::GetIO(), myFontData);
+
+    // 5\. Execution Loop  
+    while (isRunning) {  
+        menu.StartRender(); // Polls Win32 messages & ImGui::NewFrame()  
+        menu.Render();      // Your overridden logic  
+        menu.EndRender();   // ImGui::Render() & d3dContext-\>Present()  
+    }
+
+    return 0;  
 }
-````
 
-This structure allows for:
+## **🧱 Advanced: Component System**
 
-* **Declarative element creation** (like React, but in C++)
-* **Reusability** — wrap elements in a single line and access them globally
-* **Clean separation** between definition, logic, and rendering
+The framework uses a **Declarative Component Pattern**. Instead of calling ImGui::Button every frame with manual state, wrap them in a GuiElementWrapper.
 
----
+### **Defining a Widget**
 
-## 🧱 Features
+inline const GuiElementWrapper\<FpGuiButton\> primaryBtn \= { ImVec2(150, 40), \[\]() {  
+    FpGuiButton b;  
+    b.text \= "Confirm";  
+    b.backgroundColor \= IMGUI\_COLORS::charcoal;  
+    b.rounding \= 8.f;  
+    // Link an animation preset  
+    b.panim \= \&FP\_GUI\_DEFAULTS::anims::buttons::regular;   
+    return b;  
+}};
 
-✅ Easy-to-use wrappers for ImGui elements
-🎨 Custom color and animation presets (`FP_GUI_DEFAULTS`)
-🧩 Type-safe GUI elements with templated wrappers
-🧠 Component-based design for clean architecture
-🌀 Built-in animation and outline utilities
+### **Using the Widget**
 
----
+void Render() {  
+    // Retrieve the persistent instance  
+    static auto& button \= primaryBtn.Get();  
+      
+    // Auto-center using geometry helpers  
+    g\_guiGeom.CalculateAndSetCenterX(button.size.x);  
+      
+    if (button.active \= FP\_GUI::Button(button.active, button.size, button.params)) {  
+        // Triggered\!  
+    }  
+}
 
-## ⚙️ Dependencies
+## **📚 Examples**
 
-* [Dear ImGui](https://github.com/ocornut/imgui)
-* C++17 or higher
-* (Optional) multithreading support for async actions
+For a complete and working implementation, check out the `gui_framework/examples/` directory.
 
----
+The simple_gui_example demonstrates:
 
-## 📦 Integration
+* Full borderless window setup.
+* Loading custom fonts from memory.
+* Using the GuiElementWrapper for interactive buttons.
+* Centering logic using the GuiGeom class utility.
 
-Just include the framework headers in your project:
+## **🎨 Styling & Utilities**
 
-```cpp
-#include "gui_framework.h"
-#include "gui_elements.hpp"
-```
+* **Colors**: Access standardized palettes in gui\_framework\_colors.h (e.g., IMGUI\_COLORS::deepGray).  
+* **Fonts**: Use FP\_GUI::Font::GetFont(float size) to retrieve pre-rasterized fonts at specific scales without blurry interpolation.  
+* **NotiLabel**: Use FP\_GUI::NotiLabel for temporary, centered status messages that fade out automatically.
 
-Then initialize your GUI elements inside gui_elements.hpp (examples provided), then inside
-your ImGui frame loop call the functions from gui_framework.h with your gui elements from gui_elements.hpp.
+## **⚙️ Technical Requirements**
 
-__OPTIONAL__:
-Set your menu's window size in gui_geom.h if your using NotiLabel() so that it centers the label properly.
+* **Compiler**: C++17 Compatible (MSVC Recommended).  
+* **OS**: Windows (utilizes dwmapi.h and d3d11.h).  
+* **SDK**: DirectX June 2010 or modern Windows SDK.
 
-
-## 📜 License
-
-MIT License — feel free to use, modify, and distribute this framework.
-
----
-
-## 👤 Author
-
-**speedaru**
+**Author**: speedaru
