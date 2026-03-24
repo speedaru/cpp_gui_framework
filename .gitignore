@@ -3,8 +3,8 @@
 .vs/
 
 # build stuff
-intermediate/
-gui_framework/build/
+*intermediate/
+*build/
 
 # visual studio files
 *.sln
