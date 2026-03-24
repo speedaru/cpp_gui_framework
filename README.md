@@ -26,7 +26,7 @@ A high-performance, object-oriented **C++ GUI framework** built on top of [Dear 
 
 The framework relies on gui\_globals.h to define the initial state of your application. Set these before initializing your windows.
 
-#### **gui\_globals.h :**
+### **gui\_globals.h :**
 ```
 inline vec2 g_screenSize{}; // filled automatically by calling GuiDefinitionsInit() in your main()
 inline vec2 g_windowSize{ 400, 300 }; // to change
@@ -48,7 +48,7 @@ public:
         m_windowData.size = g_windowSize;
         m_windowData.styles = WS_POPUP; // Borderless
           
-        // Initialize D3D11 and Win32  
+        // initialize D3D11 and Win32  
         Init(dxDevice, GuiWndProcHandler);  
     }
 
@@ -73,27 +73,27 @@ public:
 Your entry point should initialize the hardware device, the window, and any custom fonts.
 
 ```
-int main() {  
-    bool isRunning = true;  
+int main() {
+    bool isRunning = true;
     DxDevice dxDevice;
 
-    // 1. Setup screen/window definitions  
+    // Setup screen/window definitions
     GuiDefinitionsInit();
 
-    // 2. Setup DX11 Hardware  
+    // Setup DX11 Hardware
     render::CreateD3DDevice(dxDevice);
 
-    // 3. Create Window Instance  
+    // Create Window Instance
     MainMenu menu(dxDevice, &isRunning);
 
-    // 4. (Optional) Load Custom Fonts  
+    // (optional) Load Custom Fonts
     // FP_GUI::InitFonts(ImGui::GetIO(), myFontData);
 
-    // 5. Execution Loop  
-    while (isRunning) {  
-        menu.StartRender(); // Polls Win32 messages & ImGui::NewFrame()  
-        menu.Render();      // Your overridden logic  
-        menu.EndRender();   // ImGui::Render() & d3dContext->Present()  
+    // Execution Loop
+    while (isRunning) {
+        menu.StartRender(); // Polls Win32 messages & ImGui::NewFrame()
+        menu.Render();      // Your overridden logic
+        menu.EndRender();   // ImGui::Render() & d3dContext->Present()
     }
 }
 ````
