@@ -7,7 +7,4 @@
 *build/
 
 # visual studio files
-*.sln
-*.vcxproj
-*.vcxproj.filters
 *.vcxproj.user
